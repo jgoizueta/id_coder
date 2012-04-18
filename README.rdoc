@@ -1,19 +1,44 @@
 = id_coder
 
-Description goes here.
+Id-codes are relatively short codes to represent externally id internal numbers.
 
-== Contributing to id_coder
- 
-* Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet.
-* Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it.
-* Fork the project.
-* Start a feature/bugfix branch.
-* Commit and push until you are happy with your contribution.
-* Make sure to add tests for it. This is important so I don't break it in a future version unintentionally.
-* Please try not to mess with the Rakefile, version, or history. If you want to have your own version, or is otherwise necessary, that is fine, but please isolate to its own commit so I can cherry-pick around it.
+A bijection between ids and codes is used to assure uniqueness of codes and to avoid storing the
+codes in the database (codes and ids are computed on-the-fly from each other).
+
+Codes are user-visible; they're designed to be the user's identification of some element.
+
+Only digits an capital letters are used for the codes, excluding I,O,1,0 to avoid confusion,
+and a check digit can be used to detect most common transcription errors. This makes codes
+viable to be transmitted orally, etc.
+
+The number of digits used is scalable: the minimum number of digits and the increment-size can be
+parameterized to render good-looking codes.
+
+An IdCoder can be defined passing to it three optional parameters that define the lenght of the codes:
+
+  IdCoder[:num_digits=>4, :block_digits=>3, :check_digit=>false]
+
+An additional parameter can be passed to define which characters will be used as digits for the codes
+and its order; this must be a String of IdCoder::RADIX distinct characters:
+
+  IdCoder[:code_digits=>"0123456789ABCDEFGHIJKLMNOPQRSTUV"]
+
+Alternatively, a seed parameter can be passed to generate a randomized string
+
+  IdCoder[:seed=>8734112]
+
+Since this might produce different results in different Ruby versions, the code_digits produced can be accessed
+and kept for portability:
+
+  IdCoder[:seed=>8734112].code_digits # -> "9GTFNJSZA6LQWXV3BEKHYMP75U8R24CD"
+
+Ids (integers) can be coded and decoded into alphanumeric strings like this:
+
+  id_coder = IdCoder[]
+  id_coder.id_to_code(7) # => "JEQJTE3"
+  id_coder.code_to_id("JEQJTE3") # => 7
 
 == Copyright
 
 Copyright (c) 2012 Javier Goizueta. See LICENSE.txt for
 further details.
-
